@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Treeviewer
+Bundle-SymbolicName: com.sabir.training.rcp.treeviewer;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: SABIR
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.apache.felix.scr,
+ org.eclipse.equinox.util,
+ org.eclipse.equinox.event
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: javax.inject
+Automatic-Module-Name: com.sabir.training.rcp.treeviewer

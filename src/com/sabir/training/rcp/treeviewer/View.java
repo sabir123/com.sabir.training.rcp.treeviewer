@@ -7,12 +7,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
@@ -60,8 +67,10 @@ public class View extends ViewPart {
 		@Override
 		public Image getImage(Object obj) {
 			if(obj instanceof File) {
-				if(((File)obj).isDirectory())
-				return workbench.getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+				if(((File)obj).isDirectory()) {
+					
+					return workbench.getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+				}
 			}
 			return workbench.getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 		}
@@ -70,6 +79,17 @@ public class View extends ViewPart {
 			return element == null ? "" : ((File)element).getName();
 		}
 	}	
+	
+	private class FileSizeLabelProvider extends ColumnLabelProvider{
+		@Override
+		public String getText(Object element) {
+			
+			long fileSize = ((File)element).length();
+			String fileSizeStr = Long.toString(fileSize) ;
+			return element == null ? "-1" : fileSizeStr;
+			
+		}
+	}
 	
 	
 	@Override
@@ -93,12 +113,53 @@ public class View extends ViewPart {
 		TreeViewerColumn fileNameColumn = new TreeViewerColumn(viewer, SWT.NONE);
 		fileNameColumn.getColumn().setWidth(300);
 		fileNameColumn.getColumn().setText("File Name");
+		
 		fileNameColumn.setLabelProvider(new FileNameLabelProvider());
+		
+		TreeViewerColumn fileSizeColumn = new TreeViewerColumn(viewer, SWT.NONE);
+		fileSizeColumn.getColumn().setWidth(100);
+		fileSizeColumn.getColumn().setText("Size");
+		fileSizeColumn.setLabelProvider(new FileSizeLabelProvider());
 
 		// Provide the input to the ContentProvider
-		viewer.setInput(new File[] {new File("C:\\work\\Test")});
-	}
+		viewer.setInput(new File[] {new File("C:\\work\\Test") , new File("C:\\Work\\GIT")});
+		
+		// Create a menu manager and create context menu
+        MenuManager menuManager = new MenuManager();
+        Menu menu = menuManager.createContextMenu(viewer.getTree());
+        // set the menu on the SWT widget
+        viewer.getTree().setMenu(menu);
+        // register the menu with the framework
+        getSite().registerContextMenu(menuManager, viewer);
 
+        // make the selection available to other views
+        getSite().setSelectionProvider(viewer);
+        // Set the sorter for the table
+
+		
+		
+		viewer.getTree().addListener(SWT.Expand, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				System.out.println("View.createPartControl(...).new Listener() {...}.handleEvent()" );
+			}
+		});
+		
+		viewer.refresh();
+				
+		getSite().setSelectionProvider(viewer);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+			System.out.println(
+						"View.createPartControl(...).new ISelectionChangedListener() {...}.selectionChanged()");
+				System.out.println(event.getSelection().toString());
+				
+			}
+		});
+	}
 
 	@Override
 	public void setFocus() {

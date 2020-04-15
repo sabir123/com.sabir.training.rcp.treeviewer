@@ -42,17 +42,97 @@
       </perspectiveExtension>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.sabir.training.rcp.treeviewer.handlers.ShowSelectionHandler"
+            id="com.sabir.training.rcp.treeviewer.showSelectionCommand"
+            name="Show Selection">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.sabir.training.rcp.treeviewer.handlers.ShowSelectionHandler"
+            commandId="com.sabir.training.rcp.treeviewer.showSelectionHandler">
+      </handler>
+   </extension>
+   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
+            allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
                label="File">
+            <menu
+                  label="Child Menu">
+               <command
+                     commandId="com.sabir.training.rcp.treeviewer.anotherShowSelection"
+                     label="Another Show"
+                     style="push">
+               </command>
+            </menu>
+            <command
+                  commandId="com.sabir.training.rcp.treeviewer.showSelectionCommand"
+                  icon="icons/eclipse16.png"
+                  label="Show Selection"
+                  style="push"
+                  tooltip="Shows the selection">
+            </command>
+            <separator
+                  name="com.sabir.training.rcp.treeviewer.separator"
+                  visible="true">
+            </separator>
             <command
                   commandId="org.eclipse.ui.file.exit"
-                  label="Exit">
+                  label="Exit"
+                  style="push">
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <command
+               commandId="com.sabir.training.rcp.treeviewer.showSelectionCommand"
+               icon="icons/eclipse16.png"
+               label="Show Selection"
+               mnemonic="S"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:com.sabir.training.rcp.treeviewer.view">
+         <command
+               commandId="com.sabir.training.rcp.treeviewer.showSelectionCommand"
+               label="show selected"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="twoSelected">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.core.expressions.definitions">
+<definition id="twoSelected">
+   <with
+         variable="activeMenuSelection">
+      <count
+            value="2">
+      </count>
+   </with>
+      </definition>
+</extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.sabir.training.rcp.treeviewer.handlers.ShowSelectionHandler"
+            id="com.sabir.training.rcp.treeviewer.anotherShowSelection"
+            name="Another Show">
+      </command>
    </extension>
 
 </plugin>
